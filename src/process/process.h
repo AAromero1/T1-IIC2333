@@ -23,7 +23,7 @@ typedef struct process_t{
 } Process;
 
 
-Process* create_process(int pid, char *name, int start_time, int t_cpu_burst, int n_burst, int io_wait, int t_deadline);
+Process* create_process(char *name ,int pid, int start_time, int t_cpu_burst, int n_burst, int io_wait, int t_deadline);
 void free_process(Process* process);
 void print_process(Process* process);
 bool process_is_finished(Process* process);
@@ -35,3 +35,4 @@ void update_io_waiting(Process* process);
 void update_response_time(Process* process, int tick);
 void process_finish(Process* process, int tick);
 int update_process_in_running(Process* process, int tick);
+void update_quantum(Process* process, int quantum);

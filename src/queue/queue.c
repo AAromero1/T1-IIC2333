@@ -71,7 +71,10 @@ void change_queue_by_time(Queue* origin, int time, Queue* high_priority){
     Process* temp = origin->head;
     Process* prev = NULL;
     while(temp != NULL){
-        if(temp->start_time == time && temp->status == "READY"){
+        printf("Checking process with start_time: %d and status: %s\n", temp->start_time, temp->status);
+        if(temp->start_time == time && strcmp(temp->status, "READY") == 0){
+            printf("Process matches criteria, moving to high_priority queue\n");
+            printf("\n\n");
             if(prev == NULL){
                 origin->head = temp->next;
             }else{
@@ -79,8 +82,11 @@ void change_queue_by_time(Queue* origin, int time, Queue* high_priority){
             }
             temp->next = NULL;
             insert_process(high_priority, temp);
+            printf("Process moved to high_priority queue\n");
+            printf("\n\n");
+        } else {
+            prev = temp;
         }
-        prev = temp;
         temp = temp->next;
     }
 }
@@ -106,11 +112,11 @@ void update_priority_queue(Queue* high_priority, Queue* low_priority, int time){
 void update_process(Queue* queue, int time){
     Process* temp = queue->head;
     while(temp != NULL){
-        if(temp->status == "READY"){
+        if(strcmp(temp->status, "READY")== 0){
             temp->waiting_time++;
         }
-        else if(temp->status == "WAITING"){
-            temp->t_io_waiting++;
+        else if(strcmp(temp->status , "WAITING")== 0){
+            update_io_waiting(temp);
         }
         temp = temp->next;
     }
@@ -139,7 +145,7 @@ Process* get_process_by_priority(Queue* queue, int tick){
     Process* temp = queue->head;
     Process* process = NULL;
     while(temp != NULL){
-        if(temp->status == "READY"){
+        if(strcmp(temp->status, "READY")== 0){
             if(process == NULL){
                 process = temp;
             }else{
@@ -163,8 +169,10 @@ Process* get_process_by_priority(Queue* queue, int tick){
 
 bool is_some_process_ready(Queue* queue){
     Process* temp = queue->head;
+    printf("Checking if some process is ready\n");
     while(temp != NULL){
-        if(temp->status == "READY"){
+        printf("Process with status: %s\n", temp->status);
+        if(strcmp(temp->status, "READY") == 0){
             return true;
         }
         temp = temp->next;
@@ -175,10 +183,22 @@ bool is_some_process_ready(Queue* queue){
 bool is_some_process_running(Queue* queue){
     Process* temp = queue->head;
     while(temp != NULL){
-        if(temp->status == "RUNNING"){
+        if(strcmp(temp->status, "RUNNING")== 0){
             return true;
         }
         temp = temp->next;
     }
     return false;
+}
+
+bool is_empty(Queue* queue){
+    return queue->head == NULL;
+}
+
+void print_queue(Queue* queue){
+    Process* temp = queue->head;
+    while(temp != NULL){
+        print_process(temp);
+        temp = temp->next;
+    }
 }

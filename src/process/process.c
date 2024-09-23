@@ -16,6 +16,7 @@ Process* create_process(char *name ,int pid, int start_time, int t_cpu_burst, in
     process->io_wait = io_wait;
     process->t_deadline = t_deadline;
     process-> response_time = -1;
+    process->quantum_tick = 0;
     return process;
 }
 
@@ -38,6 +39,7 @@ void print_process(Process* process){
     printf("Quantum remaining: %d\n", process->quantum_tick);
     printf("Waiting time: %d\n", process->waiting_time);
     printf("Time after deadline: %d\n", process->time_after_deadline);
+    printf("Change\n\n\n");
 }   
 
 
@@ -49,10 +51,46 @@ bool process_is_for_update_priority(Process* process, int tick){
     return 2 * process->t_deadline < tick - process->t_lcpu;
 }
 
+int update_process_in_running(Process* process, int tick){
+    printf("Updating process in running state:\n");
+    printf("PID: %d, Tick: %d\n", process->pid, tick);
+    printf("Quantum tick before update: %d\n", process->quantum_tick);
+    printf("CPU burst tick before update: %d\n", process->cpu_burst_tick);
+
+    
+    
+    if(process->cpu_burst_tick == 0){
+        printf("CPU burst completed for PID: %d\n", process->pid);
+        process->cpu_burst_tick = process->t_cpu_burst;
+        if(process->n_burst == 0){
+            printf("Process PID: %d has no more bursts left\n", process->pid);
+            process_finish(process, tick);
+        }
+        else{
+            process_leave_CPU(process, tick);
+            return 1;
+        }
+        return 2;
+    }
+    else if(process->quantum_tick >= process->quantum){
+        printf("Quantum expired for PID: %d\n", process->pid);
+        process_interrupted(process, tick);
+        return 3;
+    }
+
+    process->quantum_tick++;
+    process->cpu_burst_tick--;
+
+    printf("Quantum tick after update: %d\n", process->quantum_tick);
+    printf("CPU burst tick after update: %d\n", process->cpu_burst_tick);
+    return 0;
+}
+
 void process_interrupted(Process* process, int tick){
     process->interrupt++;
     process->t_lcpu = tick;
     process->status = "READY";
+    process->quantum_tick = 0;
 }
 
 void process_leave_CPU(Process* process, int tick){
@@ -77,7 +115,7 @@ void update_io_waiting(Process* process){
 }
 
 void update_response_time(Process* process, int tick){
-    if(process->response_time == -1 && process->status == "RUNNING"){
+    if(process->response_time == -1 && strcmp(process->status, "RUNNING") == 0){
         process->response_time = tick;
     }
 }
@@ -85,25 +123,18 @@ void update_response_time(Process* process, int tick){
 void process_finish(Process* process, int tick){
     process->status = "FINISHED";
     process->turnaround_time = tick;
+    process->t_lcpu= tick;
 }
 
-int update_process_in_running(Process* process, int tick){
-    process->quantum_tick++;
-    process->cpu_burst_tick--;
 
-    if(process->cpu_burst_tick==0){
-        process->status = "WAITING";
-        process->cpu_burst_tick = process->t_cpu_burst;
-        process->n_burst--;
-        return 1;
+
+void update_quantum(Process* process, int quantum){
+    printf("Updating quantum for PID: %d\n", process->pid);
+    printf("Current quantum: %d\n", process->quantum);
+    printf("Current quantum tick: %d\n", process->quantum_tick);
+    if(process->quantum_tick == 0){
+        process->quantum = quantum;
     }
-    else if(process->n_burst == 0){
-        process_finish(process, tick);
-        return 2;
-    }
-    else if(process->quantum_tick == process->quantum){
-        process_interrupted(process, tick);
-        return 3;
-    }
-    return 0;
+    printf("Updated quantum: %d\n", process->quantum);
+
 }
