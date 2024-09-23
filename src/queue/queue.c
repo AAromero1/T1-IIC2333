@@ -82,6 +82,7 @@ void change_queue_by_time(Queue* origin, int time, Queue* high_priority){
             }
             temp->next = NULL;
             insert_process(high_priority, temp);
+            temp = prev;
             printf("Process moved to high_priority queue\n");
             printf("\n\n");
         } else {
@@ -200,6 +201,14 @@ void print_queue(Queue* queue){
     Process* temp = queue->head;
     while(temp != NULL){
         print_process(temp);
+        temp = temp->next;
+    }
+}
+
+void print_queue_for_enum(Queue* queue){
+    Process* temp = queue->head;
+    while(temp != NULL){
+        print_for_enum(temp);
         temp = temp->next;
     }
 }

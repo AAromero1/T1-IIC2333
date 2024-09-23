@@ -30,12 +30,22 @@ void print_process(Process* process){
    // printf("Start time: %d\n", process->start_time);
    printf("CPU burst: %d\n", process->t_cpu_burst);
    // printf("Number of bursts: %d\n", process->n_burst);
-  //  printf("IO wait: %d\n", process->io_wait);
+  //  printf("IO wait: %d\n", process->io_wait);PO
     //printf("Deadline: %d\n", process->t_deadline);
     printf("Interrupt: %d\n", process->interrupt);
     printf("Quantum used: %d\n", process->quantum_tick);
     printf("Change\n\n\n");
-}   
+}
+
+void print_for_enum(Process* process){
+    printf("\nname: %s\n", process->name);
+    printf("pid: %d\n", process->pid);
+    printf("Interrupt: %d\n", process->interrupt);
+    printf("Turnaround time: %d\n", process->turnaround_time);
+    printf("response time: %d\n", process->response_time);
+    printf("waiting time: %d\n", process->waiting_time);
+    printf("time after deadline: %d\n\n", process->time_after_deadline);
+}
 
 
 bool process_is_finished(Process* process){
@@ -66,7 +76,7 @@ int update_process_in_running(Process* process, int tick){
         
     }
     else if(process->quantum_tick >= process->quantum){
-        
+
         if(process->cpu_burst_tick == 1 && process->n_burst == 1){
             printf("Process PID: %d has no more bursts left\n", process->pid);
             process_finish(process, tick);
@@ -118,13 +128,13 @@ void update_io_waiting(Process* process){
 
 void update_response_time(Process* process, int tick){
     if(process->response_time == -1 && strcmp(process->status, "RUNNING") == 0){
-        process->response_time = tick;
+        process->response_time = tick - process->start_time;
     }
 }
 
 void process_finish(Process* process, int tick){
     process->status = "FINISHED";
-    process->turnaround_time = tick;
+    process->turnaround_time = tick - process->start_time;
     process->t_lcpu= tick;
 }
 

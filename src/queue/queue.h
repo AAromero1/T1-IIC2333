@@ -22,3 +22,4 @@ bool is_some_process_ready(Queue* queue);
 bool is_some_process_running(Queue* queue);
 bool is_empty(Queue* queue);
 void print_queue(Queue* queue);
+void print_queue_for_enum(Queue* queue);

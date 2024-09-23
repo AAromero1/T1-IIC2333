@@ -36,3 +36,4 @@ void update_response_time(Process* process, int tick);
 void process_finish(Process* process, int tick);
 int update_process_in_running(Process* process, int tick);
 void update_quantum(Process* process, int quantum);
+void print_for_enum(Process* process);
