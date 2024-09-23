@@ -19,6 +19,8 @@ int main(int argc, char const *argv[])
 	printf("Quantum: %d\n", low_priority->quantum);
 	Queue *all_processes = create_queue(0);
 
+	Queue *finish = create_queue(0);
+
 
 	InputFile *input_file = read_file(file_name);
 
@@ -55,6 +57,10 @@ int main(int argc, char const *argv[])
 				if(type == 3){
 					down_priority_queue(high_priority, low_priority, process);
 				}
+				if(type == 1){
+					change_queue(high_priority, finish, process);
+					change_queue(low_priority, finish, process);	
+				}
 				process =NULL;
 			}
 		}
@@ -62,38 +68,48 @@ int main(int argc, char const *argv[])
 		change_queue_by_time(all_processes, tick, high_priority);
 		update_priority_queue(high_priority, low_priority, tick);
 
-		if (is_some_process_ready(high_priority)){
-			process = get_process_by_priority(high_priority, tick);
-			printf("Process ready in high\n");
-			process->status = "RUNNING";
-			update_quantum(process, high_priority->quantum);
-			update_response_time(process, tick);
+		if (process == NULL){
+			if (is_some_process_ready(high_priority)){
+				process = get_process_by_priority(high_priority, tick);
+				printf("Process ready in high\n");
+				process->status = "RUNNING";
+				update_quantum(process, high_priority->quantum);
+				update_response_time(process, tick);
 
-			int type = update_process_in_running(process, tick);
-			printf("type: %d\n", type);	
-			printf("Process running\n");
-			if(type != 0){
-				if(type == 3){
-					down_priority_queue(high_priority, low_priority, process);
+				int type = update_process_in_running(process, tick);
+				printf("type: %d\n", type);	
+				printf("Process running\n");
+				if(type != 0){
+					if(type == 3){
+						down_priority_queue(high_priority, low_priority, process);
+					}
+					if(type == 1){
+					change_queue(high_priority, finish, process);
+					change_queue(low_priority, finish, process);	
+					}
+					process =NULL;
 				}
-				process =NULL;
+
 			}
+			else if(is_some_process_ready(low_priority)){
+				process = get_process_by_priority(low_priority, tick);
+				printf("Process ready in low\n");
+				process->status = "RUNNING";
+				update_quantum(process, low_priority->quantum);
+				update_response_time(process, tick);
 
-		}
-		else if(is_some_process_ready(low_priority)){
-			process = get_process_by_priority(low_priority, tick);
-			printf("Process ready in low\n");
-			process->status = "RUNNING";
-			update_quantum(process, low_priority->quantum);
-			update_response_time(process, tick);
-
-			int type = update_process_in_running(process, tick);
-			printf("Process running\n");
-			if(type != 0){
-				if(type == 3){
-					down_priority_queue(high_priority, low_priority, process);
+				int type = update_process_in_running(process, tick);
+				printf("Process running\n");
+				if(type != 0){
+					if(type == 3){
+						down_priority_queue(high_priority, low_priority, process);
+					}
+					if(type == 1){
+					change_queue(high_priority, finish, process);
+					change_queue(low_priority, finish, process);	
+					}
+					process =NULL;
 				}
-				process =NULL;
 			}
 		}
 
@@ -103,19 +119,17 @@ int main(int argc, char const *argv[])
 		print_queue(low_priority);
 		tick++;
 
-		if(is_empty(high_priority ) && is_empty(low_priority)){
+		if(is_empty(high_priority ) && is_empty(low_priority) && is_empty(all_processes)){
 			printf("Todos los procesos han terminado\n");
 			break;
 		}
-		if(tick > 20){
-			printf("Se ha excedido el tiempo de ejecución\n");
-			break;
-		}
-
 	}
-	
+	printf("finishQueue\n");
+	print_queue(finish);
 	free_queue(high_priority);
 	free_queue(low_priority);
-	free_queue(all_processes);	
+	free_queue(all_processes);
+	free_queue(finish);	
 	input_file_destroy(input_file);
+
 }

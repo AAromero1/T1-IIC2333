@@ -133,6 +133,7 @@ void down_priority_queue(Queue* high_priority, Queue* low_priority, Process* pro
                 prev->next = temp->next;
             }
             temp->next = NULL;
+            printf("Process with PID: %d moved to low_priority queue\n", temp->pid);
             insert_process(low_priority, temp);
             break;
         }
