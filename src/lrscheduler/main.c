@@ -103,9 +103,18 @@ int main(int argc, char const *argv[])
 		if(is_empty(high_priority ) && is_empty(low_priority) && is_empty(all_processes)){
 			break;
 		}
-
 	}
-	print_queue_for_enum(finish);
+
+	sort_queue_by_pid(finish);
+    FILE *file = fopen(output_file, "w");
+    if (!file) {
+        fprintf(stderr, "Error al abrir el archivo %s para escritura.\n", output_file);
+        return 1;
+    }
+	
+
+    print_processes_to_file(file, finish);
+    fclose(file);
 	free_queue(high_priority);
 	free_queue(low_priority);
 	free_queue(all_processes);
