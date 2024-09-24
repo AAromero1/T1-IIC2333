@@ -56,10 +56,6 @@ Queue *all_processes = create_queue(0);
 Queue *finish = create_queue(0);
 ```
 
-- **Algoritmo Round Robin**: Implementación del algoritmo RR para la planificación de procesos.
-- **Gestión de Tiempos**: Control y seguimiento del tiempo de ejecución de cada proceso.
-- **Interrupciones y Context Switching**: Manejo de interrupciones y cambio de contexto entre procesos.
-
 ## Estructura del Proyecto :open_file_folder:
 
 - [`src/`]: Contiene el código fuente del proyecto.
