@@ -15,6 +15,7 @@ Process* create_process(char *name ,int pid, int start_time, int t_cpu_burst, in
     process->n_burst = n_burst;
     process->io_wait = io_wait;
     process->t_deadline = t_deadline;
+    process->t_lcpu = start_time;
     process-> response_time = -1;
     process->quantum_tick = 0;
     return process;

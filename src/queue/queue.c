@@ -80,15 +80,16 @@ void change_queue_by_time(Queue* origin, int time, Queue* high_priority){
             }else{
                 prev->next = temp->next;
             }
-            temp->next = NULL;
-            insert_process(high_priority, temp);
-            temp = prev;
+            Process* to_move = temp;
+            temp = temp->next;
+            to_move->next = NULL;
+            insert_process(high_priority, to_move);
             printf("Process moved to high_priority queue\n");
             printf("\n\n");
         } else {
             prev = temp;
+            temp = temp->next;
         }
-        temp = temp->next;
     }
 }
 
@@ -191,6 +192,16 @@ bool is_some_process_running(Queue* queue){
         temp = temp->next;
     }
     return false;
+}
+
+int process_in_queue(Queue* queue){
+    Process* temp = queue->head;
+    int count = 0;
+    while(temp != NULL){
+        count++;
+        temp = temp->next;
+    }
+    return count;
 }
 
 bool is_empty(Queue* queue){

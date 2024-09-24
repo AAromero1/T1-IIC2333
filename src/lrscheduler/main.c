@@ -116,9 +116,6 @@ int main(int argc, char const *argv[])
 			printf("Todos los procesos han terminado\n");
 			break;
 		}
-		if(tick == 20){
-			break;
-		}
 
 	}
 	printf("finishQueue\n");
