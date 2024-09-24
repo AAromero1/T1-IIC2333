@@ -65,8 +65,8 @@ int main(int argc, char const *argv[])
 	while (true)
 	{
 		printf("Tick: %d\n", tick);
-		update_process(high_priority, tick);
-		update_process(low_priority, tick);
+		update_process(high_priority, tick, process);
+		update_process(low_priority, tick, process);
 
 		if(process!= NULL){
 		 	int type = update_process_in_running(process, tick);

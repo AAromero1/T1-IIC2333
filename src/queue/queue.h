@@ -24,3 +24,4 @@ bool is_empty(Queue* queue);
 void print_queue(Queue* queue);
 void print_queue_for_enum(Queue* queue);
 int process_in_queue(Queue* queue);
+void update_process(Queue* queue, int time, Process* running_process);

@@ -111,13 +111,13 @@ void update_priority_queue(Queue* high_priority, Queue* low_priority, int time){
     }
 }
 
-void update_process(Queue* queue, int time){
+void update_process(Queue* queue, int time, Process* running_process){
     Process* temp = queue->head;
     while(temp != NULL){
-        if(strcmp(temp->status, "READY")== 0){
+        if(strcmp(temp->status, "READY")== 0 && temp != running_process){
             temp->waiting_time++;
         }
-        else if(strcmp(temp->status , "WAITING")== 0){
+        else if(strcmp(temp->status , "WAITING")== 0 && temp != running_process){
             update_io_waiting(temp);
         }
         temp = temp->next;
