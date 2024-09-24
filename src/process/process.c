@@ -72,14 +72,21 @@ int update_process_in_running(Process* process, int tick){
     }
 
     if(process->cpu_burst_tick == 0){
-        printf("CPU burst completed for PID: %d\n", process->pid);
-        printf("Leave CPU\n", process->pid);
         process_leave_CPU(process, tick);
 
         if(process->n_burst == 0){
-            printf("Process PID: %d has no more bursts left\n", process->pid);
             process_finish(process, tick);
             return 1;
+        }
+
+        if(process->quantum_tick>= process->quantum){
+            printf("Leave CPU and change to LOW %d\n", process->pid);
+            process->t_lcpu = tick;
+            printf("Time LCPU: %d\n", process->t_lcpu);
+            process->status = "READY";
+            process->quantum_tick = 0;
+            process->quantum = 0;
+            return 3;
         }
 
         update_io_waiting(process);
